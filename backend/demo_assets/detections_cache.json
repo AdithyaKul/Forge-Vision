@@ -1,0 +1,57 @@
+{
+  "cam01.mp4": [
+    {
+      "timestamp_raw": 3.2,
+      "event_type": "Person Detected (Subject A)",
+      "confidence": 0.89,
+      "frame_number": 48,
+      "bbox": [200, 150, 320, 480]
+    },
+    {
+      "timestamp_raw": 12.8,
+      "event_type": "Person Detected (Subject A)",
+      "confidence": 0.94,
+      "frame_number": 192,
+      "bbox": [550, 140, 670, 470]
+    }
+  ],
+  "cam02.mp4": [
+    {
+      "timestamp_raw": 1.5,
+      "event_type": "Person Detected (Subject A)",
+      "confidence": 0.78,
+      "frame_number": 15,
+      "bbox": [180, 120, 280, 360]
+    },
+    {
+      "timestamp_raw": 8.0,
+      "event_type": "Person Detected (Subject A)",
+      "confidence": 0.85,
+      "frame_number": 80,
+      "bbox": [420, 110, 520, 350]
+    },
+    {
+      "timestamp_raw": 15.4,
+      "event_type": "Person Detected (Subject A)",
+      "confidence": 0.91,
+      "frame_number": 154,
+      "bbox": [680, 100, 780, 340]
+    }
+  ],
+  "cam03.mp4": [
+    {
+      "timestamp_raw": 4.1,
+      "event_type": "Person Detected (Subject A)",
+      "confidence": 0.92,
+      "frame_number": 102,
+      "bbox": [300, 220, 460, 680]
+    },
+    {
+      "timestamp_raw": 14.2,
+      "event_type": "Person Detected (Subject A)",
+      "confidence": 0.88,
+      "frame_number": 355,
+      "bbox": [920, 210, 1080, 670]
+    }
+  ]
+}

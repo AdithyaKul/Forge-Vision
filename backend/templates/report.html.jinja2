@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FORGE-VISION Forensic Report — {{ case.case_number }}</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0b0f19; color: #e2e8f0; margin: 0; padding: 40px; }
+        .container { max-width: 900px; margin: 0 auto; background: #111827; border: 1px solid #1f2937; border-radius: 8px; padding: 32px; }
+        .header { border-bottom: 2px solid #3b82f6; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .logo { font-size: 24px; font-weight: bold; letter-spacing: 2px; color: #60a5fa; }
+        .sublogo { font-size: 11px; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; }
+        .badge { padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        .badge-verified { background: #064e3b; color: #34d399; border: 1px solid #059669; }
+        .badge-failed { background: #881337; color: #f43f5e; border: 1px solid #e11d48; }
+        h2 { color: #93c5fd; border-left: 4px solid #3b82f6; padding-left: 10px; margin-top: 28px; font-size: 18px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+        th, td { border: 1px solid #1f2937; padding: 10px; text-align: left; }
+        th { background: #1e293b; color: #cbd5e1; font-weight: 600; }
+        tr:nth-child(even) { background: #0f172a; }
+        .hash { font-family: monospace; font-size: 11px; color: #a7f3d0; word-break: break-all; }
+        .footer { margin-top: 40px; border-top: 1px solid #1f2937; padding-top: 16px; font-size: 11px; color: #64748b; text-align: center; }
+        @media print {
+            body { background: #ffffff; color: #000000; padding: 0; }
+            .container { border: none; background: #ffffff; color: #000000; }
+            th { background: #f1f5f9; color: #000000; }
+            tr:nth-child(even) { background: #f8fafc; }
+            .hash { color: #047857; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <div class="logo">FORGE-VISION</div>
+                <div class="sublogo">Forensic Video Evidence Analysis Report</div>
+            </div>
+            <div>
+                <span class="badge {{ 'badge-verified' if audit_chain.valid else 'badge-failed' }}">
+                    {{ 'Chain Intact' if audit_chain.valid else 'Chain Compromised' }}
+                </span>
+            </div>
+        </div>
+
+        <table>
+            <tr>
+                <th>Case Number</th>
+                <td>{{ case.case_number }}</td>
+                <th>Case Name</th>
+                <td>{{ case.name }}</td>
+            </tr>
+            <tr>
+                <th>Investigator</th>
+                <td>{{ case.investigator }}</td>
+                <th>Generated At</th>
+                <td>{{ generated_at }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td colspan="3">{{ case.description or 'N/A' }}</td>
+            </tr>
+        </table>
+
+        <h2>Ingested Evidence Files</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Filename</th>
+                    <th>Vendor Spec</th>
+                    <th>SHA-256 Hash</th>
+                    <th>Offset</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ev in evidence_list %}
+                <tr>
+                    <td>#{{ ev.id }}</td>
+                    <td><strong>{{ ev.filename }}</strong></td>
+                    <td>{{ ev.vendor_label }}</td>
+                    <td class="hash">{{ ev.sha256 }}</td>
+                    <td>{{ '+' if ev.offset_seconds >= 0 else '' }}{{ ev.offset_seconds }}s</td>
+                    <td>{{ ev.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Normalized Multi-Camera Timeline</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Norm Time</th>
+                    <th>Raw Time</th>
+                    <th>Camera Source</th>
+                    <th>Event Type</th>
+                    <th>Confidence</th>
+                    <th>Frame</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for evt in events_list %}
+                <tr>
+                    <td><strong>{{ evt.timestamp_normalized }}s</strong></td>
+                    <td>{{ evt.timestamp_raw }}s</td>
+                    <td>{{ evt.vendor_label }} ({{ evt.filename }})</td>
+                    <td>{{ evt.event_type }}</td>
+                    <td>{{ (evt.confidence * 100)|round(1) }}%</td>
+                    <td>#{{ evt.frame_number }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Audit Trail & Hash Chain</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Actor</th>
+                    <th>Action</th>
+                    <th>Details</th>
+                    <th>Entry Hash (SHA-256)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in audit_logs %}
+                <tr>
+                    <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>{{ log.actor }}</td>
+                    <td><strong>{{ log.action }}</strong></td>
+                    <td>{{ log.detail }}</td>
+                    <td class="hash">{{ log.entry_hash[:16] }}...</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="footer">
+            FORGE-VISION Evidence System • Generated strictly on-premise • Cryptographic Hash Verification Applied
+        </div>
+    </div>
+</body>
+</html>
